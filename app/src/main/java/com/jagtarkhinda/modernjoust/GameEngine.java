@@ -57,7 +57,8 @@ public class GameEngine extends SurfaceView implements Runnable {
 
     //Creating an array to store all enemies
     ArrayList<Sprite> enemies = new ArrayList<Sprite>();
-
+    int[] speed = new int[8];
+    int speed_count = 0;
 
     // ----------------------------
     // ## SPRITES
@@ -171,7 +172,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         if (enemies.size() > 0) {
             for (int i = 0; i < enemies.size(); i++) {
                 Sprite t = enemies.get(i);
-                t.setxPosition(t.getxPosition() + 5);
+                t.setxPosition(t.getxPosition() + speed[i]);
             }
         }
 
@@ -188,6 +189,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     public void redrawSprites() {
         if (this.holder.getSurface().isValid()) {
             this.canvas = this.holder.lockCanvas();
+
+            //@TODO: Draw the sprites (rectangle, circle, etc)
 
             //----------------
             // Put all your drawing code in this section
@@ -228,19 +231,26 @@ public class GameEngine extends SurfaceView implements Runnable {
                 //setting random position for the enemies after every 2 seconds (max enemies limit = 8)
 
                 if (enemies.size() < 8) {
+
                     if (get_level == 1) {
                         makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                                 this.level1 - this.demo.image.getHeight());
+                        //setting speed
+                        speed[speed_count] = (int) ((Math.random() * (((20 - 5) + 1)) + 5));
                     } else if (get_level == 2) {
                         makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                                 this.level2 - this.demo.image.getHeight());
+                        speed[speed_count] = (int) ((Math.random() * (((20 - 5) + 1)) + 5));
                     } else if (get_level == 3) {
                         makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                                 this.level3 - this.demo.image.getHeight());
+                        speed[speed_count] = (int) ((Math.random() * (((20 - 5) + 1)) + 5));
                     } else if (get_level == 4) {
                         makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                                 this.level4 - this.demo.image.getHeight());
+                        speed[speed_count] = (int) ((Math.random() * (((20 - 5) + 1)) + 5));
                     }
+                    speed_count++;
                 }
                 previousTime = currentTime;
             }
@@ -253,9 +263,6 @@ public class GameEngine extends SurfaceView implements Runnable {
                 }
             }
 
-
-
-            //@TODO: Draw the sprites (rectangle, circle, etc)
 
             //@TODO: Draw game statistics (lives, score, etc)
 
