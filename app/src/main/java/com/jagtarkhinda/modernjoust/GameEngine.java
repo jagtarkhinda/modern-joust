@@ -196,6 +196,17 @@ public class GameEngine extends SurfaceView implements Runnable {
                     t.setxPosition( - (t.image.getWidth()));
                 }
 
+                // Collision Detection
+                if(t.getHitbox().intersect(this.dog.getHitbox()))
+                {
+                    //removing enemy and its speed variable from scene
+                    enemies.remove(t);
+                    speed.remove(i);
+
+                    //Creating an egg
+
+                }
+
             }
         }
 
