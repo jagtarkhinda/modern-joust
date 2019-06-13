@@ -58,7 +58,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
     //Creating an array to store all enemies
     ArrayList<Sprite> enemies = new ArrayList<Sprite>();
-    int[] speed = new int[8];
+    ArrayList<Integer> speed = new ArrayList<Integer>();
     int speed_count = 0;
 
     // ----------------------------
@@ -186,7 +186,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         if (enemies.size() > 0) {
             for (int i = 0; i < enemies.size(); i++) {
                 Sprite t = enemies.get(i);
-                t.setxPosition(t.getxPosition() + speed[i]);
+                t.setxPosition(t.getxPosition() + speed.get(i));
 
                 t.updateHitbox();
 
@@ -261,7 +261,7 @@ public class GameEngine extends SurfaceView implements Runnable {
                     makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                             this.randomLevel() - this.demo.image.getHeight());
                     //setting speed for each enemy
-                    speed[speed_count] = (int) ((Math.random() * (((30 - 9) + 1)) + 9));
+                    speed.add((int) ((Math.random() * (((30 - 9) + 1)) + 9)));
                     speed_count++;
                 }
                 previousTime = currentTime;
