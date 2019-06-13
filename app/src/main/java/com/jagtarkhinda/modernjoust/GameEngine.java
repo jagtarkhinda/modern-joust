@@ -173,8 +173,18 @@ public class GameEngine extends SurfaceView implements Runnable {
             for (int i = 0; i < enemies.size(); i++) {
                 Sprite t = enemies.get(i);
                 t.setxPosition(t.getxPosition() + speed[i]);
+
+                //Making enemies appear from other side of screen
+                if(t.getxPosition()> this.screenWidth)
+                {
+                    t.setxPosition( - (t.image.getWidth()));
+                }
+
             }
         }
+
+
+
 
         // @TODO: Collision detection code
 
