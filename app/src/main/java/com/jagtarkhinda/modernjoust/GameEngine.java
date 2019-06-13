@@ -211,6 +211,47 @@ public class GameEngine extends SurfaceView implements Runnable {
             canvas.drawBitmap(level, 0, level3, p);
             canvas.drawBitmap(level, 0, level4, p);
 
+            // ------------------------------
+            // CREATING ENEMIES
+            // ------------------------------
+
+            //getting level
+            int get_level = randonLevel();
+
+            //keeping track of time
+
+            // get current time
+            currentTime = System.currentTimeMillis();
+
+            if ((currentTime - previousTime) > 2000) {
+
+                //setting random position for the enemies after every 2 seconds (max enemies limit = 8)
+
+                if (enemies.size() < 8) {
+                    if (get_level == 1) {
+                        makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
+                                this.level1 - this.demo.image.getHeight());
+                    } else if (get_level == 2) {
+                        makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
+                                this.level2 - this.demo.image.getHeight());
+                    } else if (get_level == 3) {
+                        makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
+                                this.level3 - this.demo.image.getHeight());
+                    } else if (get_level == 4) {
+                        makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
+                                this.level4 - this.demo.image.getHeight());
+                    }
+                }
+                previousTime = currentTime;
+            }
+            //drawing all the enemies from array
+            if (enemies.size() > 0) {
+                for (int i = 0; i < enemies.size(); i++) {
+                    Sprite t = enemies.get(i);
+                    p.setColor(Color.WHITE);
+                    canvas.drawBitmap(t.getImage(), t.getxPosition(), t.getyPosition(), p);
+                }
+            }
 
 
 
