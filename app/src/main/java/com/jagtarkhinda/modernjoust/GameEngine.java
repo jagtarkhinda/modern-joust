@@ -63,8 +63,9 @@ public class GameEngine extends SurfaceView implements Runnable {
     ArrayList<Sprite> enemies = new ArrayList<Sprite>();
     ArrayList<Integer> speed = new ArrayList<Integer>();
     ArrayList<Sprite> eggs = new ArrayList<Sprite>();
+    ArrayList<Integer> eggTime = new ArrayList<Integer>();
     int speed_count = 0;
-
+    int eggSpawnTime = 0;
     // ----------------------------
     // ## SPRITES
     // ----------------------------
@@ -216,9 +217,20 @@ public class GameEngine extends SurfaceView implements Runnable {
                     eggY = t.getyPosition();
                     //Creating an egg
                     makeEgg(eggX,eggY);
+                    eggTime.add((int) System.currentTimeMillis());
                     //removing enemy and its speed variable from scene
                     enemies.remove(t);
                     speed.remove(i);
+                }
+            }
+
+            //Removing egg after 10 seconds
+            for(int i =0; i<eggs.size();i++)
+            {
+                if((int) System.currentTimeMillis() - eggTime.get(i)  > 10000)
+                {
+                    eggs.remove(i);
+                    eggTime.remove(i);
                 }
             }
 
