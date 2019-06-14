@@ -48,8 +48,11 @@ public class GameEngine extends SurfaceView implements Runnable {
     int level2;
     int level3;
     int level4;
+    int eggX = 0;
+    int eggY = 0;
     Sprite demo;
     Sprite dog;
+    Sprite egg;
 
 
     // -----------------------------------
@@ -59,6 +62,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     //Creating an array to store all enemies
     ArrayList<Sprite> enemies = new ArrayList<Sprite>();
     ArrayList<Integer> speed = new ArrayList<Integer>();
+    ArrayList<Sprite> eggs = new ArrayList<Sprite>();
     int speed_count = 0;
 
     // ----------------------------
@@ -95,7 +99,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //cat sprite to get the width and height properties
         demo = new Sprite(getContext(), 100, 200, R.drawable.cat);
-        dog = new Sprite(getContext(),200,level2 - demo.image.getHeight(),R.drawable.dogbig);
+        dog = new Sprite(getContext(),400,level2 - demo.image.getHeight(),R.drawable.dogbig);
 
 
         // @TODO: Any other game setup stuff goes here
@@ -112,6 +116,14 @@ public class GameEngine extends SurfaceView implements Runnable {
         e1 = new Sprite(getContext(), xs, ys, R.drawable.cat);
         enemies.add(e1);
     }
+
+    //Egg will be created each time this function is called (xs and ys will be passed randomly)
+    public void makeEgg(int xs, int ys) {
+        egg = new Sprite(getContext(), xs, ys, R.drawable.egg);
+        eggs.add(egg);
+    }
+
+
 
     // ------------------------------
     // USER INPUT FUNCTIONS
@@ -182,7 +194,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         // @TODO: Update the position of the sprites
 
 
-        //updating enemy positions (I will modify this)
+        //updating enemy positions
         if (enemies.size() > 0) {
             for (int i = 0; i < enemies.size(); i++) {
                 Sprite t = enemies.get(i);
@@ -197,17 +209,20 @@ public class GameEngine extends SurfaceView implements Runnable {
                 }
 
                 // Collision Detection
+
                 if(t.getHitbox().intersect(this.dog.getHitbox()))
                 {
+                    eggX = t.getxPosition();
+                    eggY = t.getyPosition();
+                    //Creating an egg
+                    makeEgg(eggX,eggY);
                     //removing enemy and its speed variable from scene
                     enemies.remove(t);
                     speed.remove(i);
-
-                    //Creating an egg
-
                 }
-
             }
+
+
         }
 
 
@@ -295,6 +310,12 @@ public class GameEngine extends SurfaceView implements Runnable {
             // ------------------------------
             canvas.drawBitmap(dog.getImage(),dog.getxPosition(),dog.getyPosition(),p);
             canvas.drawRect(dog.getHitbox(),p);
+
+            //CREATING EGGS
+            for(int i =0; i< eggs.size(); i++) {
+                Sprite eg = eggs.get(i);
+                canvas.drawBitmap(eg.getImage(), eg.getxPosition(), eg.getyPosition(), p);
+            }
 
             //@TODO: Draw game statistics (lives, score, etc)
 
