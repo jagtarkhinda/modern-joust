@@ -215,6 +215,7 @@ public class GameEngine extends SurfaceView implements Runnable {
                 {
                     eggX = t.getxPosition();
                     eggY = t.getyPosition();
+
                     //Creating an egg
                     makeEgg(eggX,eggY);
                     eggTime.add((int) System.currentTimeMillis());
@@ -224,16 +225,27 @@ public class GameEngine extends SurfaceView implements Runnable {
                 }
             }
 
-            //Removing egg after 10 seconds
+            //Removing egg after 10 seconds and creating cat again
             for(int i =0; i<eggs.size();i++)
             {
                 if((int) System.currentTimeMillis() - eggTime.get(i)  > 10000)
                 {
+                    makeEnemy(eggs.get(i).getxPosition(),eggs.get(i).getyPosition());
+                    speed.add((int) ((Math.random() * (((30 - 9) + 1)) + 9)));
+                    speed_count++;
+
                     eggs.remove(i);
                     eggTime.remove(i);
                 }
             }
 
+            //MOVING DOG (TEMP CODE)
+            dog.setxPosition(dog.getxPosition() + 20);
+            if(dog.getxPosition()> this.screenWidth)
+            {
+                dog.setxPosition( - (dog.image.getWidth()));
+            }
+            dog.updateHitbox();
 
         }
 
