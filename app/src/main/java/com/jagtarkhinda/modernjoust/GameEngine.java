@@ -51,6 +51,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
     int level2;
     int level3;
     int level4;
+    int enemy_Counter = 0;
     Sprite playerHeight;
     Sprite player;
     int eggX = 0;
@@ -471,13 +472,14 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
                 //setting random position for the enemies after every 2 seconds (max enemies limit = 8)
 
-                if (enemies.size() < 8)
+                if (enemy_Counter < 8)
                 {
                     makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                             this.randomLevel() - this.demo.image.getHeight());
                     //setting speed for each enemy
                     speed.add((int) ((Math.random() * (((30 - 9) + 1)) + 9)));
                     speed_count++;
+                    enemy_Counter++;
                 }
                 previousTime = currentTime;
             }
