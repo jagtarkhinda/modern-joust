@@ -16,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Music = MediaPlayer.create(MainActivity.this,R.raw.gamemusic);
+        Music = MediaPlayer.create(MainActivity.this,R.raw.foggy);
         Music.setLooping(true);
+        Music.setVolume(0.2f,0.2f);
         Music.start();
         // Get size of the screen
         Display display = getWindowManager().getDefaultDisplay();
