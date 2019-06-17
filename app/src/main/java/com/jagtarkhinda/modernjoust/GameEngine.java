@@ -537,6 +537,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
             Log.d("Swipe", "Swipe Up");
             Toast.makeText(getContext(), " Swipe Up ", Toast.LENGTH_LONG).show();
+            sound.getPlayerJumpUp();
             isMoving = 3;
             return true;
         }
@@ -545,6 +546,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
             Log.d("Swipe", "Swipe Down");
             Toast.makeText(getContext(), " Swipe Down ", Toast.LENGTH_LONG).show();
+            sound.getPlayerJumpDown();
             isMoving = 4;
             return true;
         }
