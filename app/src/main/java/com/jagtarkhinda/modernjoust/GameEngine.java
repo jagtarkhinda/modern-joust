@@ -549,7 +549,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             return true;
         }
 
-        if (motionEvent1.getX() - motionEvent2.getX() > 50) {
+        if (motionEvent1.getX() - motionEvent2.getX() > 100) {
 
             Log.d("Swipe", "Swipe Left");
             Toast.makeText(getContext(), " Swipe Left ", Toast.LENGTH_LONG).show();
@@ -557,7 +557,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             return true;
         }
 
-        if (motionEvent2.getX() - motionEvent1.getX() > 50) {
+        if (motionEvent2.getX() - motionEvent1.getX() > 100) {
 
             Log.d("Swipe", "Swipe Right");
             Toast.makeText(getContext(), " Swipe Right ", Toast.LENGTH_LONG).show();
