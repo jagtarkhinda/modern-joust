@@ -58,6 +58,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
     Sprite demo;
     Sprite dog;
     Sprite egg;
+    Sounds sound;
     private GestureDetector gestureDetector;
 
     // -----------------------------------
@@ -116,6 +117,11 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
         //cat sprite to get the width and height properties
         demo = new Sprite(getContext(), 100, 200, R.drawable.cat);
         dog = new Sprite(getContext(),400,level2 - demo.image.getHeight(),R.drawable.dogbig);
+
+        //creating instance of Sounds class
+        sound = new Sounds(context);
+
+
 
 
         // @TODO: Any other game setup stuff goes here
@@ -214,6 +220,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
     }
 
     public void startGame() {
+
         gameIsRunning = true;
         gameThread = new Thread(this);
         gameThread.start();
@@ -253,6 +260,8 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                     eggY = t.getyPosition();
 
                     //Creating an egg
+                    sound.getEnemyDie();
+
                     makeEgg(eggX,eggY);
                     eggTime.add((int) System.currentTimeMillis());
                     //removing enemy and its speed variable from scene
@@ -269,7 +278,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                     makeEnemy(eggs.get(i).getxPosition(),eggs.get(i).getyPosition());
                     speed.add((int) ((Math.random() * (((30 - 9) + 1)) + 9)));
                     speed_count++;
-
+                    sound.getEggTimeUp();
                     eggs.remove(i);
                     eggTime.remove(i);
                 }
