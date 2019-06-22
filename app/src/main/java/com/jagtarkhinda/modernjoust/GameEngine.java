@@ -8,7 +8,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
+import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -86,7 +88,8 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
     // ----------------------------
     // ## GAME STATS - number of lives, score, etc
     // ----------------------------
-
+    int lives = 5;
+    int score = 0;
 
     public GameEngine(Context context, int w, int h) {
         super(context);
@@ -177,18 +180,93 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
         Random r = new Random();
         int level = r.nextInt(4);
         level = level + 1;
+
         if (level == 1) {
-            return this.level1;
-        } else if (level == 2) {
-            return this.level2;
+                return this.level1;
+        }
+        else if (level == 2) {
+                return this.level2;
         }
         else if (level == 3) {
-            return this.level3;
+                return this.level3;
         }
         else if (level == 4) {
-            return this.level4;
+                return this.level4;
         }
         return 0;
+    }
+
+    public void youWin(){
+        // huds background
+        p.setStyle(Paint.Style.FILL);
+        // argb == alpha, red, green, blue where alpha is used for transparency
+        p.setColor(Color.argb(250,169, 223, 191));
+
+        // RectF is a function to draw rounded rectangle
+        RectF hudBg = new RectF(
+                10,
+                20,
+                this.screenWidth - 10,
+                this.screenHeight - 20
+        );
+        this.canvas.drawRoundRect(hudBg, 50, 30, p);
+
+        // Text style
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        // Text Color
+        p.setColor(Color.rgb(30, 132, 73));
+        // Text Size
+        p.setTextSize(100);
+        // Text transparency
+        // Displaying Lives Status
+        String lose = "YOU WIN!!!";
+        //Code to find the center of the screen to display text
+        Rect r = new Rect();
+        canvas.getClipBounds(r);
+        int cHeight = r.height();
+        int cWidth = r.width();
+        p.setTextAlign(Paint.Align.LEFT);
+        p.getTextBounds(lose, 0, lose.length(), r);
+        float x = cWidth / 2f - r.width() / 2f - r.left;
+        float y = cHeight / 2f + r.height() / 2f - r.bottom;
+        canvas.drawText(lose, x, y, p);
+    }
+
+    public void youLose() {
+        // huds background
+        p.setStyle(Paint.Style.FILL);
+        // argb == alpha, red, green, blue where alpha is used for transparency
+        p.setColor(Color.argb(250,245, 183, 177));
+
+        // RectF is a function to draw rounded rectangle
+        RectF hudBg = new RectF(
+                10,
+                20,
+                this.screenWidth - 10,
+                this.screenHeight - 20
+        );
+        this.canvas.drawRoundRect(hudBg, 50, 30, p);
+
+        // Text style
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        // Text Color
+        p.setColor(Color.rgb(148, 49, 38));
+        // Text Size
+        p.setTextSize(100);
+        // Text transparency
+        // Displaying Lives Status
+        String lose = "YOU LOSE!!!";
+        //Code to find the center of the screen to display text
+        Rect r = new Rect();
+        canvas.getClipBounds(r);
+        int cHeight = r.height();
+        int cWidth = r.width();
+        p.setTextAlign(Paint.Align.LEFT);
+        p.getTextBounds(lose, 0, lose.length(), r);
+        float x = cWidth / 2f - r.width() / 2f - r.left;
+        float y = cHeight / 2f + r.height() / 2f - r.bottom;
+        canvas.drawText(lose, x, y, p);
+
     }
 
 
@@ -256,8 +334,28 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
                 // Collision Detection
 
+
+                //detecting when enemy touches player
+                if(t.getHitbox().intersect(this.player.getHitboxTop()))
+                {
+                    if((player.getyPosition() != level4 - this.playerHeight.getImage().getHeight()) || (player.getxPosition() != 50)) {
+                        lives--;
+                        isMoving = 0;
+                        sound.getPlayerDie();
+                        playerUp = false;
+                        playerDown = false;
+                        player.setxPosition(50);
+                        player.setyPosition(level4 - this.playerHeight.getImage().getHeight());
+                        player.updateHitBoxTop();
+                        player.updateHitboxBottom();
+                    }
+
+                }
+
+                //detecting when plyer jumps on enemy
                 if(t.getHitbox().intersect(this.player.getHitboxBottom()))
                 {
+
                     eggX = t.getxPosition();
                     eggY = t.getyPosition();
 
@@ -272,11 +370,28 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                     enemies.remove(t);
                     speed.remove(i);
                 }
+
+
+            }
+
+            //detecting player collision with egg
+            for(int i =0; i<eggs.size();i++) {
+
+                //detecting player collision with egg
+                if (player.getHitboxTop().intersect(eggs.get(i).getHitbox())
+                        || player.getHitboxBottom().intersect(eggs.get(i).getHitbox())) {
+                    eggs.remove(i);
+                    eggTime.remove(i);
+                    sound.getCollectEgg();
+                    score++;
+
+                }
             }
 
             //Removing egg after 10 seconds and creating cat again
             for(int i =0; i<eggs.size();i++)
             {
+
                 if((int) System.currentTimeMillis() - eggTime.get(i)  > 10000)
                 {
                     makeEnemy(eggs.get(i).getxPosition(),eggs.get(i).getyPosition());
@@ -298,6 +413,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
         }
 
+
         //player control
         if (isMoving != 0) {
             // -------------------------------------
@@ -309,7 +425,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                 if (this.player.getxPosition() >= this.screenWidth) {
                     this.player.setxPosition((0 - this.player.getImage().getWidth()));
                 }
-                this.player.setxPosition(this.player.getxPosition() + 20);
+                this.player.setxPosition(this.player.getxPosition() + 30);
                 this.player.updateHitboxBottom();
                 this.player.updateHitBoxTop();
                 Log.d("Moving", "X == " + this.player.getxPosition());
@@ -317,7 +433,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                 if ((this.player.getxPosition() + this.player.getImage().getWidth()) <= 0) {
                     this.player.setxPosition(this.screenWidth);
                 }
-                this.player.setxPosition(this.player.getxPosition() - 20);
+                this.player.setxPosition(this.player.getxPosition() - 30);
                 this.player.updateHitboxBottom();
                 this.player.updateHitBoxTop();
                 Log.d("Moving", "Left");
@@ -383,26 +499,38 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
         {
 
             this.player.setyPosition(this.player.getyPosition() - 250);
+
+
             if(this.player.getyPosition() <= newY){
                 this.player.setyPosition(newY);
                 playerUp = false;
             }
             this.player.updateHitboxBottom();
             this.player.updateHitBoxTop();
+
         }
 
         //MOVING PLAYER DOWN
         if(this.player.getyPosition() != newY && playerDown == true)
         {
-            this.player.setyPosition(this.player.getyPosition() + 250);
-            if(this.player.getyPosition() >= newY){
+
+
+            Log.d("LevelNumber", " level = " + playerLevelNumber);
+
+            if (this.player.getyPosition() <= newY) {
+                this.player.setyPosition(this.player.getyPosition() + 250);
+            }
+            else if(this.player.getyPosition() > newY){
+                this.player.setyPosition(0);
+                this.player.setyPosition(this.player.getyPosition() + 250);
+            }
+            if((this.player.getyPosition() >=0) && (this.player.getyPosition() >= newY) ) {
                 this.player.setyPosition(newY);
                 playerDown = false;
             }
             this.player.updateHitboxBottom();
             this.player.updateHitBoxTop();
         }
-
     //this.player.setyPosition(newY);
 
     // -------------------------------------
@@ -504,19 +632,58 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                 }
             }
 
-            // ------------------------------
-            // CREATING DOG
-            // ------------------------------
-            canvas.drawBitmap(dog.getImage(),dog.getxPosition(),dog.getyPosition(),p);
-            canvas.drawRect(dog.getHitbox(),p);
+
 
             //CREATING EGGS
             for(int i =0; i< eggs.size(); i++) {
                 Sprite eg = eggs.get(i);
                 canvas.drawBitmap(eg.getImage(), eg.getxPosition(), eg.getyPosition(), p);
+                p.setColor(Color.RED);
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(5);
+                canvas.drawRect(eg.getHitbox(),p);
             }
 
             //@TODO: Draw game statistics (lives, score, etc)
+            // huds background
+            p.setStyle(Paint.Style.FILL);
+            // argb == alpha, red, green, blue where alpha is used for transparency
+            p.setColor(Color.argb(200,86, 101, 115));
+
+            // RectF is a function to draw rounded rectangle
+            RectF hudBg = new RectF(
+                    10,
+                    20,
+                    this.screenWidth - 10,
+                    150
+            );
+            this.canvas.drawRoundRect(hudBg, 30, 30, p);
+
+            // Text style
+            p.setStyle(Paint.Style.FILL_AND_STROKE);
+            // Text Color
+            p.setColor(Color.BLACK);
+            // Text Size
+            p.setTextSize(100);
+            // Text transparency
+            p.setAlpha(200);
+            // Displaying Lives Status
+            this.canvas.drawText(("Lives: " + lives), hudBg.left+20, hudBg.bottom-25, p);
+            // Calculating Score Text x position
+            int scoreX = (int) (hudBg.left + ((hudBg.right - hudBg.left) / 2));
+            // Displaying Lives Status
+            this.canvas.drawText(("Score: " + score), scoreX, hudBg.bottom-25, p);
+
+            //----------------
+
+            if(lives == 0)
+            {
+                youLose();
+            }
+            if(score == 8)
+            {
+                youWin();
+            }
 
             //----------------
             this.holder.unlockCanvasAndPost(canvas);
