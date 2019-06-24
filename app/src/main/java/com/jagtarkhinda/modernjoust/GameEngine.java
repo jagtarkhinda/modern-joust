@@ -3,6 +3,7 @@ package com.jagtarkhinda.modernjoust;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,6 +16,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,7 +30,6 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
     // Android debug variables
     final static String TAG = "JOUST";
-
     // -----------------------------------
     // ## SCREEN & DRAWING SETUP VARIABLES
     // -----------------------------------
@@ -182,16 +183,16 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
         level = level + 1;
 
         if (level == 1) {
-                return this.level1;
+            return this.level1;
         }
         else if (level == 2) {
-                return this.level2;
+            return this.level2;
         }
         else if (level == 3) {
-                return this.level3;
+            return this.level3;
         }
         else if (level == 4) {
-                return this.level4;
+            return this.level4;
         }
         return 0;
     }
@@ -319,7 +320,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
 
         //updating enemy positions
-        if (enemies.size() > 0) {
+        if (enemies.size() > 0 || eggs.size() > 0 ) {
             for (int i = 0; i < enemies.size(); i++) {
                 Sprite t = enemies.get(i);
                 t.setxPosition(t.getxPosition() + speed.get(i));
@@ -341,6 +342,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                     if((player.getyPosition() != level4 - this.playerHeight.getImage().getHeight()) || (player.getxPosition() != 50)) {
                         lives--;
                         isMoving = 0;
+                        playerLevelNumber = 4;
                         sound.getPlayerDie();
                         playerUp = false;
                         playerDown = false;
@@ -375,7 +377,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             }
 
             //detecting player collision with egg
-            for(int i =0; i<eggs.size();i++) {
+            for(int i = 0; i<eggs.size();i++) {
 
                 //detecting player collision with egg
                 if (player.getHitboxTop().intersect(eggs.get(i).getHitbox())
@@ -531,9 +533,9 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             this.player.updateHitboxBottom();
             this.player.updateHitBoxTop();
         }
-    //this.player.setyPosition(newY);
+        //this.player.setyPosition(newY);
 
-    // -------------------------------------
+        // -------------------------------------
         // End of Moving player right or left side on swipe
         //
 
@@ -586,11 +588,13 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             p.setColor(Color.BLUE);
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(5);
-            canvas.drawRect(this.player.getHitboxBottom(),p);
+            player.getHitboxTop();
+            // canvas.drawRect(this.player.getHitboxBottom(),p);
             p.setColor(Color.RED);
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(5);
-            canvas.drawRect(this.player.getHitboxTop(),p);
+            player.getHitboxBottom();
+            // canvas.drawRect(this.player.getHitboxTop(),p);
 
             // ------------------------------
             // CREATING ENEMIES
@@ -608,7 +612,7 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
 
                 //setting random position for the enemies after every 2 seconds (max enemies limit = 8)
 
-                if (enemy_Counter < 8)
+                if (enemy_Counter < 6)
                 {
                     makeEnemy((int) ((Math.random() * (((this.screenWidth - this.demo.image.getWidth()) - 0) + 1)) + 0),
                             this.randomLevel() - this.demo.image.getHeight());
@@ -628,7 +632,8 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                     p.setColor(Color.RED);
                     p.setStyle(Paint.Style.STROKE);
                     p.setStrokeWidth(5);
-                    canvas.drawRect(t.getHitbox(),p);
+                    t.getHitbox();
+                    // canvas.drawRect(t.getHitbox(),p);
                 }
             }
 
@@ -641,7 +646,8 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
                 p.setColor(Color.RED);
                 p.setStyle(Paint.Style.STROKE);
                 p.setStrokeWidth(5);
-                canvas.drawRect(eg.getHitbox(),p);
+                eg.getHitbox();
+                // canvas.drawRect(eg.getHitbox(),p);
             }
 
             //@TODO: Draw game statistics (lives, score, etc)
@@ -679,8 +685,9 @@ public class GameEngine extends SurfaceView implements Runnable, GestureDetector
             if(lives == 0)
             {
                 youLose();
+                startGame();
             }
-            if(score == 8)
+            if(score == 6)
             {
                 youWin();
             }
